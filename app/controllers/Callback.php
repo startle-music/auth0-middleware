@@ -2,6 +2,7 @@
 namespace Application\Controllers;
 
 use Auth0\SDK\Auth0;
+use \Firebase\JWT\JWT;
 
 
 class Callback {
@@ -24,6 +25,11 @@ class Callback {
         ]);
     }
 
+    /**
+     * post method handler
+     *
+     * @return redirect
+     */
     public function post() 
     {
         $userInfo = $this->auth0->getUser();
@@ -33,10 +39,34 @@ class Callback {
 
         } else {
             // User is authenticated
-            setcookie( getenv('COOKIE_NAME'), 'test', time() + 60*60*24*30, '/');
+            $token = $this->createToken($userInfo);
+
+            setcookie( getenv('COOKIE_NAME'), $token, time() + 60*60*24*30, '/');
             header('Location: '. getenv('AUTH_ENDPOINT'));
         }
 
         exit();
+    }
+
+    /**
+     * Creates JWT token from user into array
+     *
+     * @param array $userInfo
+     * @return string JWT Token
+     */
+    private function createToken(array $userInfo)
+    {        
+        $key = getenv('APP_KEY');
+        $token = [
+            'iss' => getenv('APP_DOMAIN'),
+            //'aud' => getenv('APP_DOMAIN'),
+            'iat' => now(),
+            'exp' => now() + 86400,
+            'uid' => $userInfo['email']
+        ];
+
+        $jwt = JWT::encode($token, $key);
+
+        return $jwt;
     }
 }
