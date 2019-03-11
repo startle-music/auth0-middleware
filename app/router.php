@@ -14,7 +14,7 @@ $action = strtolower($_SERVER['REQUEST_METHOD']);
  *  Switch based on route endpoint 
  */
 switch ($request) {
-    case '/callback':
+    case '/auth/callback':
         try {
                 
             $controller = new Callback();
@@ -22,7 +22,7 @@ switch ($request) {
         }
         break;
         
-    case '/':
+    case '/auth/':
     default:
         $controller = new Login();
         $controller->$$action();
