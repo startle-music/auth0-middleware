@@ -24,7 +24,7 @@ class Callback {
         ]);
     }
 
-    public function get() 
+    public function post() 
     {
         $userInfo = $this->auth0->getUser();
 
