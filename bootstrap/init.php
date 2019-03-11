@@ -1,0 +1,4 @@
+<?php
+/**
+ * Bootstrap the application
+ */
