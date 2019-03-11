@@ -1,5 +1,5 @@
 <?php
-namespace Application\Controllers;
+namespace App\controllers;
 
 use Auth0\SDK\Auth0;
 use \Firebase\JWT\JWT;

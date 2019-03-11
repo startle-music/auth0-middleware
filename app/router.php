@@ -3,11 +3,10 @@ namespace Application;
 /**
  * Application Router
  */
-use Application\Controller\Login;
-use Application\Controller\Callback;
+use App\controllers\Login;
+use App\controllers\Callback;
 
-
-$request = strtolower($_SERVER['REDIRECT_URL']);
+$request = strtolower($_SERVER['REQUEST_URI']);
 $action = strtolower($_SERVER['REQUEST_METHOD']);
 
 /**
@@ -15,16 +14,21 @@ $action = strtolower($_SERVER['REQUEST_METHOD']);
  */
 switch ($request) {
     case '/auth/callback':
-        try {
-                
+        try { 
             $controller = new Callback();
-            $controller->$$action();
+            $controller->$action();
+        } catch(Exception $e) {
+            print_r('502: Method Not Allowed');
         }
         break;
         
     case '/auth/':
     default:
-        $controller = new Login();
-        $controller->$$action();
+        try { 
+            $controller = new Login();
+            $controller->$action();
+        } catch(Exception $e) {
+            print_r('502: Method Not Allowed');
+        }
         break;
 }

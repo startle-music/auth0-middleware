@@ -24,6 +24,7 @@ class Auth {
     private $cookie = 'stauth';
     private $key = 'dSErfa324fSDEs';
     private $hash = ['HS256'];
+    private $token = NULL;
 
     public function cookieExists() 
     {
@@ -37,18 +38,44 @@ class Auth {
         return $token['uid'];
     }
 
+    public function cookieIsValid()
+    {
+        $token = $this->parseCookie();
+
+        if ($token === NULL) {
+            return false;
+        }
+        return true;
+    }
+
     public function parseCookie()
     {
-        return JWT::decode( $this->key, $this->hash );
+        if (!$this->token) {
+            try {
+                $token = JWT::decode( $this->key, $this->hash );
+                
+                if (isset($token['uid'])) {
+                    $this->token = $token;
+                } else {
+                    $this->token = NULL;
+                }
+            } catch (Exception $e) {
+                $this->token = NULL;
+            }
+        }
+        return $this->token;
     }
 }
 
+$_email = null;
 $auth = new Auth();
 // check for token
 if ($auth->cookieExists()) {
-    // decode token
-    define( 'AUTHED_EMAIL', $this->getUserEmail());
 
-} else {
-    print('ERROR - NO COOKIE');
+    if($auth->cookieIsValid()) {
+        // decode token
+        $_email = $this->getUserEmail();
+    }
 }
+
+define( 'AUTHED_EMAIL', $_email);
