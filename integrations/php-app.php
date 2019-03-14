@@ -25,11 +25,21 @@ class Auth {
     private $hash = ['HS256'];
     private $token = NULL;
 
+    /**
+     * Check if the cookie with name `$cookie` exists
+     *
+     * @return bool
+     */
     public function cookieExists() 
     {
         return isset($_COOKIE[$this->cookie]);
     }
 
+    /**
+     * gets the email from the parsed token
+     *
+     * @return string Email address
+     */
     public function getTokenEmail()
     {
         $token = $this->parseCookie();
@@ -37,6 +47,11 @@ class Auth {
         return $token['uid'];
     }
 
+    /**
+     * checks if the cookie is valid
+     *
+     * @return bool
+     */
     public function cookieIsValid()
     {
         $token = $this->parseCookie();
@@ -47,6 +62,11 @@ class Auth {
         return true;
     }
 
+    /**
+     * Parses the cookie decoding the jwt.
+     *
+     * @return string jwt token
+     */
     public function parseCookie()
     {
         if (!$this->token) {
@@ -66,6 +86,10 @@ class Auth {
     }
 }
 
+/**
+ * This implements the class, defining the AUTHED_EMAIL 
+ * constant. 
+ */
 $_email = null;
 $auth = new Auth();
 // check for token
@@ -78,3 +102,13 @@ if ($auth->cookieExists()) {
 }
 
 define( 'AUTHED_EMAIL', $_email);
+
+
+/**
+ *  In order to use this you can just do the following logic.
+ *  Check if AUTHED_EMAIL isn't NULL. Then check within
+ *  your application for permissions.
+ */
+if (AUTHED_EMAIL !== NULL) {
+    // Do your stuff
+}
