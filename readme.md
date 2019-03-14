@@ -9,3 +9,32 @@ Included is a php integration script that should be copied into
 
 ### More Stuff
 Add more stuff
+
+
+### How to integrate
+Simples. 
+1. Set up the authentication framework via Apache or Nginx
+2. Copy the integration into your application
+3. Add a Snippet to your code to confirm the integration
+
+#### 1. Set up Auth framework
+The authentication routes are set up on the the `/auth` routes. This should be taken into account when setting up your webserver.
+
+##### 1a. Apache Setup
+tbd
+
+##### 1b. Nginx Setup
+tbd
+
+#### 2. Copy the integration
+The php integration for this can be found at `integrations/php-app.php`, in the integrations folder. 
+`require()` this script within your application.
+This script will check the auth cookie for a successful session. If it's not set or invalid it will redirect to the login endpoint.
+
+#### 3. Add the code snippet
+In order to use this you can just do the following logic. Check if AUTHED_EMAIL isn't NULL. Then check within your application for permissions.
+```
+if (AUTHED_EMAIL !== NULL) {
+    // Do your stuff
+}
+```
