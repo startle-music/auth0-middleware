@@ -14,6 +14,12 @@
  *  Autoload all classes installed by composer
  * 
  */
+
+if (isset()) {
+    
+}
+
+
 require_once('../integrations/php-app.php');
 
 var_dump(AUTHED_EMAIL);

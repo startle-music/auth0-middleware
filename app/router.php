@@ -9,12 +9,17 @@ use App\controllers\Callback;
 $request = strtolower($_SERVER['REQUEST_URI']);
 $action = strtolower($_SERVER['REQUEST_METHOD']);
 
+if(strpos($request, '?') !== false) {
+    $request = substr($request, 0, strpos($request, '?'));
+}
+
 /**
  *  Switch based on route endpoint 
  */
 switch ($request) {
     case '/auth/callback':
-        try { 
+    case '/auth/callback/':
+        try {
             $controller = new Callback();
             $controller->$action();
         } catch(Exception $e) {

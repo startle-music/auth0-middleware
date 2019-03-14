@@ -26,16 +26,16 @@ class Callback {
     }
 
     /**
-     * post method handler
+     * get method handler
      *
      * @return redirect
      */
-    public function post() 
-    {
+    public function get() 
+
         $userInfo = $this->auth0->getUser();
 
         if (!$userInfo) {
-            header('Location: /');
+            header('Location: /auth/error/');
 
         } else {
             // User is authenticated

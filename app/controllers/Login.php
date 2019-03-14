@@ -24,6 +24,12 @@ class Login {
         ]);
     }
 
+
+    /**
+     * get method handler
+     *
+     * @return redirect
+     */
     public function get() 
     {
         $this->auth0->login();
