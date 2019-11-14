@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application init
  */
@@ -11,4 +12,4 @@
 /**
  * Route the requests
  */
-require_once('app/router.php');
+require_once('router.php');
