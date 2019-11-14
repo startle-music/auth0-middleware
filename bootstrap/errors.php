@@ -1,17 +1,12 @@
 <?php
 
 
-function errorLog($nolog = '')
-{ }
-
-if (isset($_GET['adebug'])) {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-
-
-    function errorLog($log = '')
-    {
+function errorLog($log = '')
+{
+    if (isset($_GET['adebug'])) {
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
         error_log($log);
     }
 }
