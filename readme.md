@@ -26,6 +26,10 @@ tbd
 ##### 1b. Nginx Setup
 tbd
 
+##### 1c. Heroku
+Currently, we host this via heroku. In order to host on heroku a `Procfile` was created, specifying the use of nginx, and a `nginx_app.config` config file. 
+Heroku is tied to snoop the `master` branch, so anything pushed to `master` will be deployed on Heroku _(circa Nov 19)_.
+
 #### 2. Copy the integration
 The php integration for this can be found at `integrations/php-app.php`, in the integrations folder. 
 `require()` this script within your application.
