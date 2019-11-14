@@ -4,9 +4,12 @@
  */
 use Symfony\Component\Dotenv\Dotenv;
 
-
 /**
  *  Loads in the env file for this environment
  */
 $dotenv = new Dotenv();
-$dotenv->load(dirname('../').DIRECTORY_SEPARATOR.'.env');
+$dotenv->load(dirname('../') . DIRECTORY_SEPARATOR . '.env');
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}

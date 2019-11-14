@@ -14,11 +14,12 @@
  *  Autoload all classes installed by composer
  * 
  */
-require_once('../vendor/autoload.php');
+require_once('../vendor/firebase/php-jwt/src/JWT.php');
 
 use \Firebase\JWT\JWT;
 
-class Auth {
+class Auth
+{
 
     private $cookie = 'stauth';
     private $key = 'dSErfa324fSDEs';
@@ -30,7 +31,7 @@ class Auth {
      *
      * @return bool
      */
-    public function cookieExists() 
+    public function cookieExists()
     {
         return isset($_COOKIE[$this->cookie]);
     }
@@ -71,8 +72,8 @@ class Auth {
     {
         if (!$this->token) {
             try {
-                $token = JWT::decode( $this->key, $this->hash );
-                
+                $token = JWT::decode($this->key, $this->hash);
+
                 if (isset($token['uid'])) {
                     $this->token = $token;
                 } else {
@@ -95,13 +96,13 @@ $auth = new Auth();
 // check for token
 if ($auth->cookieExists()) {
 
-    if($auth->cookieIsValid()) {
+    if ($auth->cookieIsValid()) {
         // decode token
         $_email = $this->getUserEmail();
     }
 }
 
-define( 'AUTHED_EMAIL', $_email);
+define('AUTHED_EMAIL', $_email);
 
 
 /**
