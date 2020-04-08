@@ -8,6 +8,8 @@ function errorLog($log = '')
         ini_set('display_startup_errors', 1);
         error_reporting(E_ALL);
         error_log($log);
+        print_r('<pre>');
         print_r($log);
+        print_r('</pre>');
     }
 }
