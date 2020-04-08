@@ -6,6 +6,12 @@
 
 use Symfony\Component\Dotenv\Dotenv;
 
+
+errorLog(dirname('../'));
+errorLog(getcwd());
+errorLog(getcwd('../'));
+errorLog(chdir('../'));
+
 /**
  *  Loads in the env file for this environment
  */
