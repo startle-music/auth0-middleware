@@ -9,16 +9,15 @@ use Symfony\Component\Dotenv\Dotenv;
 
 errorLog(dirname('../'));
 errorLog(getcwd());
-errorLog(getcwd('../'));
-errorLog(chdir('../'));
+errorLog(dirname('../') . DIRECTORY_SEPARATOR . '.env');
+errorLog(__DIR__ . '/.env');
 
 /**
  *  Loads in the env file for this environment
  */
 try {
     $dotenv = new Dotenv();
-    errorLog(dirname('../') . DIRECTORY_SEPARATOR . '.env');
-    $dotenv->load(dirname('../') . DIRECTORY_SEPARATOR . '.env');
+    $dotenv->load(__DIR__ . '/.env');
 } catch (Exception $e) {
     // must be on heroku or an environment without an env file.
     // Heroku automatically has secrets.
