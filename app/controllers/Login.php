@@ -1,4 +1,5 @@
 <?php
+
 namespace App\controllers;
 
 use Auth0\SDK\Auth0;
@@ -11,6 +12,8 @@ class Login
 
     function __construct()
     {
+
+        errorLog(getenv('AUTH_DOMAIN'));
 
         $this->auth0 = new Auth0([
             'domain' => getenv('AUTH_DOMAIN'),
