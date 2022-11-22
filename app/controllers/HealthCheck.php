@@ -24,6 +24,6 @@ class HealthCheck
      */
     public function get()
     {
-        print_r('Fit as a Butcher\'s Dog 🐕');
+        print_r('OK');
     }
 }
