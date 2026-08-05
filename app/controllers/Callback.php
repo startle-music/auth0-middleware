@@ -2,7 +2,7 @@
 namespace App\controllers;
 
 use Auth0\SDK\Auth0;
-use \Firebase\JWT\JWT;
+use App\services\TokenFactory;
 
 class Callback
 {
@@ -13,14 +13,15 @@ class Callback
     {
         $this->auth0 = new Auth0([
             'domain' => getenv('AUTH_DOMAIN'),
-            'client_id' => getenv('AUTH_ID'),
-            'client_secret' => getenv('AUTH_SECRET'),
-            'redirect_uri' => getenv('AUTH_REDIRECT'),
-            'audience' => getenv('AUTH_AUDIENCE'),
-            'scope' => getenv('AUTH_SCOPE'),
-            'persist_id_token' => getenv('AUTH_PERSIST_ID'),
-            'persist_access_token' => getenv('AUTH_PERSIST_ACCESS'),
-            'persist_refresh_token' => getenv('AUTH_REFRESH'),
+            'clientId' => getenv('AUTH_ID'),
+            'clientSecret' => getenv('AUTH_SECRET'),
+            'redirectUri' => getenv('AUTH_REDIRECT'),
+            'audience' => [getenv('AUTH_AUDIENCE')],
+            'scope' => explode(' ', getenv('AUTH_SCOPE')),
+            'cookieSecret' => getenv('COOKIE_SECRET'),
+            'persistIdToken' => filter_var(getenv('AUTH_PERSIST_ID'), FILTER_VALIDATE_BOOLEAN),
+            'persistAccessToken' => filter_var(getenv('AUTH_PERSIST_ACCESS'), FILTER_VALIDATE_BOOLEAN),
+            'persistRefreshToken' => filter_var(getenv('AUTH_REFRESH'), FILTER_VALIDATE_BOOLEAN),
         ]);
     }
 
@@ -46,18 +47,27 @@ class Callback
         }
 
         // If there is a user persisted (PHP session by default), return that.
-        // Otherwise, look for a "code" and "state" URL parameter to validate and exchange, respectively.
-        // If the state validation and code exchange are successful, return the userinfo.
-        $userinfo = $this->auth0->getUser();
+        $credentials = $this->auth0->getCredentials();
 
-        // We have no persisted user and no "code" parameter so we redirect to the Universal Login Page.
-        if (empty($userinfo) || empty($_SESSION["return_to"])) {
-            $this->auth0->login();
+        // Otherwise, look for a "code" and "state" URL parameter to validate and exchange.
+        // If the state validation and code exchange are successful, we'll have credentials.
+        if (empty($credentials) && !empty($_GET['code']) && !empty($_GET['state'])) {
+            try {
+                $this->auth0->exchange();
+                $credentials = $this->auth0->getCredentials();
+            } catch (\Throwable $e) {
+                $credentials = null;
+            }
+        }
+
+        // We have no persisted user and no valid "code"/"state" so we redirect to the Universal Login Page.
+        if (empty($credentials) || empty($_SESSION["return_to"])) {
+            header('Location: ' . $this->auth0->login());
             exit();
         } else {
             // User is authenticated
             $return_to = $_SESSION['return_to'];
-            $token = $this->createToken($userinfo, $return_to);
+            $token = $this->createToken($credentials->user, $return_to);
             $return_to = $_SESSION['return_to'];
 
             $addition = '?jtl=' . $token;
@@ -80,21 +90,6 @@ class Callback
      */
     private function createToken(array $userInfo, string $return_url)
     {
-        $key = getenv('APP_KEY');
-        $domain = parse_url($return_url, PHP_URL_HOST);
-        $email = $userInfo['email'];
-        $time = new \DateTime();
-        $now = $time->getTimestamp();
-        $token = [
-            'iss' => $domain,
-            //'aud' => getenv('APP_DOMAIN'),
-            'iat' => $now,
-            'exp' => $now + 86400,
-            'uid' => $email
-        ];
-
-        $jwt = JWT::encode($token, $key);
-
-        return $jwt;
+        return TokenFactory::create($userInfo, $return_url, getenv('APP_KEY'));
     }
 }

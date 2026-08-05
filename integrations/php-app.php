@@ -1,29 +1,31 @@
 <?php
 /**
  *  Integration with third party PHP scripts
- * 
- *  This can be included in other php scripts in order to 
+ *
+ *  This can be included in other php scripts in order to
  *  check for and parse a token within a cookie
- * 
- * 
- * 
- * 
+ *
+ *  NOTE: $key and $cookie below are placeholder example values - they must
+ *  match the COOKIE_NAME / APP_KEY this middleware was configured with,
+ *  since that's the secret the `jtl`/cookie token was signed with.
+ *
  */
 
 /**
  *  Autoload all classes installed by composer
- * 
+ *
  */
-require_once('../vendor/firebase/php-jwt/src/JWT.php');
+require_once('../vendor/autoload.php');
 
-use \Firebase\JWT\JWT;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class Auth
 {
 
     private $cookie = 'stauth';
     private $key = 'dSErfa324fSDEs';
-    private $hash = ['HS256'];
+    private $algo = 'HS256';
     private $token = NULL;
 
     /**
@@ -66,13 +68,16 @@ class Auth
     /**
      * Parses the cookie decoding the jwt.
      *
-     * @return string jwt token
+     * @return array|null jwt token claims
      */
     public function parseCookie()
     {
         if (!$this->token) {
             try {
-                $token = JWT::decode($this->key, $this->hash);
+                $jwt = $_COOKIE[$this->cookie];
+                $decoded = JWT::decode($jwt, new Key($this->key, $this->algo));
+
+                $token = (array) $decoded;
 
                 if (isset($token['uid'])) {
                     $this->token = $token;
@@ -88,8 +93,8 @@ class Auth
 }
 
 /**
- * This implements the class, defining the AUTHED_EMAIL 
- * constant. 
+ * This implements the class, defining the AUTHED_EMAIL
+ * constant.
  */
 $_email = null;
 $auth = new Auth();
@@ -98,7 +103,7 @@ if ($auth->cookieExists()) {
 
     if ($auth->cookieIsValid()) {
         // decode token
-        $_email = $this->getUserEmail();
+        $_email = $auth->getTokenEmail();
     }
 }
 

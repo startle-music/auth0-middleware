@@ -17,14 +17,15 @@ class Login
 
         $this->auth0 = new Auth0([
             'domain' => getenv('AUTH_DOMAIN'),
-            'client_id' => getenv('AUTH_ID'),
-            'client_secret' => getenv('AUTH_SECRET'),
-            'redirect_uri' => getenv('AUTH_REDIRECT'),
-            'audience' => getenv('AUTH_AUDIENCE'),
-            'scope' => getenv('AUTH_SCOPE'),
-            'persist_id_token' => getenv('AUTH_PERSIST_ID'),
-            'persist_access_token' => getenv('AUTH_PERSIST_ACCESS'),
-            'persist_refresh_token' => getenv('AUTH_REFRESH'),
+            'clientId' => getenv('AUTH_ID'),
+            'clientSecret' => getenv('AUTH_SECRET'),
+            'redirectUri' => getenv('AUTH_REDIRECT'),
+            'audience' => [getenv('AUTH_AUDIENCE')],
+            'scope' => explode(' ', getenv('AUTH_SCOPE')),
+            'cookieSecret' => getenv('COOKIE_SECRET'),
+            'persistIdToken' => filter_var(getenv('AUTH_PERSIST_ID'), FILTER_VALIDATE_BOOLEAN),
+            'persistAccessToken' => filter_var(getenv('AUTH_PERSIST_ACCESS'), FILTER_VALIDATE_BOOLEAN),
+            'persistRefreshToken' => filter_var(getenv('AUTH_REFRESH'), FILTER_VALIDATE_BOOLEAN),
         ]);
     }
 
@@ -36,7 +37,7 @@ class Login
      */
     public function get()
     {
-        $this->auth0->login();
+        header('Location: ' . $this->auth0->login());
         exit();
     }
 
